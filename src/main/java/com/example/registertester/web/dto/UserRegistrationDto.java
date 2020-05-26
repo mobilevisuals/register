@@ -6,12 +6,21 @@ import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.AssertTrue;
 
+/*Här använder vi vår egna annotationer och kopplar dem till vår klass. List är den innre annotationen, som har en matris av
+ FieldMatch.
+* Här lägger vi 2 FieldMatch-annotationer. Vi kopplar variabeln first på annotationen med variabeln password i
+* UseerRegistrationDto. Samma princip för de andra variablerna second och message.*/
 @FieldMatch.List({
         @FieldMatch(first = "password", second = "confirmPassword", message = "The password fields must match"),
         @FieldMatch(first = "email", second = "confirmEmail", message = "The email fields must match")
 })
+/*Detta är ett DTO-objekt, som lagrar all information som överförs från klienten (webbläsaren) till
+backendsystemet (denna webb-app), när användaren fyller i formuläret.
+* Vi använder den här klassen för att validera registreringsformuläret. Denna DTO valideras med Hibernate Validator-annotioner.
+*Vi använder också vår egen @FieldMatch-annotation,som validerar om lösenordet är lika med det
+* bekräftade lösenordet och om e-postadressfältet är lika med det bekräftade e-postadressfältet.*/
 public class UserRegistrationDto {
-
+//kontrollerar att fälten inte är tomma
     @NotEmpty
     private String firstName;
 
@@ -23,7 +32,7 @@ public class UserRegistrationDto {
 
     @NotEmpty
     private String confirmPassword;
-
+//kontrollerar att det är en korrekt formaterad mejl-address
     @Email
     @NotEmpty
     private String email;
@@ -31,7 +40,7 @@ public class UserRegistrationDto {
     @Email
     @NotEmpty
     private String confirmEmail;
-
+//kontrollerar att terms är true, alltså om användaren har accepterat villkoren.
     @AssertTrue
     private Boolean terms;
 

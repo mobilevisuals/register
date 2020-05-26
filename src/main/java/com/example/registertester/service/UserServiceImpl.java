@@ -21,23 +21,30 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
+/*I den här klassen implementerar metoderna för att leta upp en användare via e-post och spara användarregistreringen
+med UserRegistrationDto.*/
 
-    @Autowired
     private UserRepository userRepository;
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     public com.example.registertester.model.User findByEmail(String email){
         return userRepository.findByEmail(email);
     }
-
+/*Det är viktigt att spara användarens lösenord med BCryptPasswordEncoder, när användaren sparas.
+Annars kan databasadministratören se lösenordet i klar text.*/
     public User save(UserRegistrationDto registration){
         User user = new User();
         user.setFirstName(registration.getFirstName());
         user.setLastName(registration.getLastName());
         user.setEmail(registration.getEmail());
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
+        //Vi gör en lista av roller, eftersom det krävs av User-klassen
         user.setRoles(Arrays.asList(new Role("ROLE_USER")));
         return userRepository.save(user);
     }
@@ -48,6 +55,12 @@ public class UserServiceImpl implements UserService {
         if (user == null){
             throw new UsernameNotFoundException("Invalid username or password.");
         }
+/*Vi får här ett objekt av Springs User-klass, inte vår User-klass.
+Denna är en modell av användarinformationen, som hämtas av UserDetailsService.
+Klassen implementerar UserDetails.
+Konstruktorn till User behöver en Collection av Authority.
+Därför anropas metoden mapRolesToAuthorities.
+*/
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),
                 mapRolesToAuthorities(user.getRoles()));
@@ -55,7 +68,11 @@ public class UserServiceImpl implements UserService {
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+                .map// låter oss omvandla ett objekt till något annat.
+                //Role omvandlas till SimpleGrantedAuthority
+                        (role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());//lägger alla objekten i vår stream i en Collection
+        //collect() en avslutande metod i Stream API
+
     }
 }

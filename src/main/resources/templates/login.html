@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<!-- Webbsidorna byggs med bootstrap and jquery.
+När användaren är registrerad kan den logga in via inloggningssidan.
+ -->
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -16,7 +19,15 @@
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
             <h1>Login page</h1>
+            <!-- Här finns ett formulär som tar emot namn och lösenord och skickar till /login.
+Detta är enligt samma princip som i måndagens projekt.
+ -->
             <form th:action="@{/login}" method="post">
+                <!-- Spring Security innehåller ett filter som avbryter en request och autentiserar användaren.
+Om användaren misslyckas med autentisering skickas användaren med hjälp av filtret till/login?error
+Om användaren har loggat ut skickas den till /login?logout
+Filtret lägger till olika värden på param, som skickas till login-sidan. Vi skriver ut olika meddelanden baserat på
+värdet av param.-->
                 <div th:if="${param.error}">
                     <div class="alert alert-danger">
                         Invalid username or password.

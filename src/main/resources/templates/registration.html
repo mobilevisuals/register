@@ -10,11 +10,14 @@
 
     <title>Registration</title>
 </head>
+<!--På registreringssidan finns flera inmatningsfält.
+För varje inmatningsfält finns motsvarande felmeddelanden.
+På toppen av formuläret finns även några globala felmeddelanden.-->
 <body>
 <div class="container">
     <div class="row">
         <div class="col-md-6 col-md-offset-3">
-
+<!--värdet "success" på param kommer ifrån redirect i registerUserAccount metoden i UserRegistrationController-->
             <div th:if="${param.success}">
                 <div class="alert alert-info">
                     You've successfully registered to our awesome app!
@@ -22,23 +25,36 @@
             </div>
 
             <h1>Registration</h1>
+           <!--formuläret har en action, som anropar POST /registration, vilket gör att registerUserAccount() i
+            //UserRegistrationController anropas.
+            //th:object specificerar ett objekt, som kopplas till den sända informationen i formuläret, alltså
+            det som användaren fyller i.
+            //Detta objekt kallas "user" och skickas till  registerUserAccount() i UserRegistrationController.
+            th:object definierar också ett objekt, som vi kan använda i formuläret med th:field
+            -->
             <form th:action="@{/registration}" th:object="${user}" method="post">
-
+<!--globala fel är allmäna fel, som inte är kopplade till något speciellt fält i formuläret. fields
+är ett THymeleaf-objekt, för fälten i ett formulär-->
                 <p class="error-message"
                    th:if="${#fields.hasGlobalErrors()}"
                    th:each="error : ${#fields.errors('global')}"
                    th:text="${error}">Validation error</p>
-
+<!--fields.hasErrors undersöker här om det finns fel för fältet med id  firstName.
+I så fall läggs "error-message" till.-->
                 <div class="form-group"
                      th:classappend="${#fields.hasErrors('firstName')}? 'has-error':''">
                     <label for="firstName" class="control-label">First name</label>
                     <input id="firstName"
                            class="form-control"
                            th:field="*{firstName}"/>
+                    <!-- th:field kopplar ett textfält till ett attribut på det UserRegistrationDto-objekt, som skapas av
+                    värdena som användaren skriver in i formuläret. Sidan vet att "user" är UserRegistrationDto,
+                     eftersom detta defineras i UserRegistrationController med  @ModelAttribute("user")-->
                     <p class="error-message"
                        th:each="error: ${#fields.errors('firstName')}"
                        th:text="${error}">Validation error</p>
                 </div>
+                <!-- Nedanstående textfält fungerar på samma sätt som textfältet för firstName. -->
                 <div class="form-group"
                      th:classappend="${#fields.hasErrors('lastName')}? 'has-error':''">
                     <label for="lastName" class="control-label">Last name</label>
