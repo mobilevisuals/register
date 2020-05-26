@@ -16,7 +16,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 	Vår klass ärver från denna klass och gör override på flera av dess metoder
 	@Configuration används för klasser med inställningar, som har en @bean-metod.
 Denna metod returnerar en bean, vilken används av Spring.
-	@EnableWebSecurity aktiverar webb-säkerheten för Spring Security och gör så att den går att integrera med Spring MVC.
 */
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -25,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void setUserService(UserService userService) {
+
         this.userService = userService;
     }
 /*Configure-metoden definierar vilka URL som ska vara säkra och vilka som ska vara öppna.
@@ -68,13 +68,15 @@ logoutSuccessUrl ställer in vilket URL, som det gå till efter utloggning.*/
 //BCryptPasswordEncoder är en implementation av PasswordEncoder, som använder BCrypt hashing funktionen.
     //metoden anropas av authenticationProvider()
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder
+    passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
     /*
-DaoAuthenticationProvider är en implementation av AuthenticationProvider-interface, som hämtar all information om
-användaren från UserDetailsService.
+DaoAuthenticationProvider är en implementation av AuthenticationProvider-interface,
 AuthenticationProvider är ett interface för klasser, som för olika autentiserings-implementationer.
+Vi ska ju autentisera användaren och hämtar all information om
+användaren från UserDetailsService.
 Metoden anropas av configure-metoden nedanför.*/
     @Bean
     public DaoAuthenticationProvider authenticationProvider(){

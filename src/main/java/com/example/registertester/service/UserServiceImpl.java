@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 
-
 @Service
 public class UserServiceImpl implements UserService {
 /*I den här klassen implementerar metoderna för att leta upp en användare via e-post och spara användarregistreringen
@@ -33,12 +32,14 @@ med UserRegistrationDto.*/
         this.passwordEncoder = passwordEncoder;
     }
 
-    public com.example.registertester.model.User findByEmail(String email){
+    public com.example.registertester.model.User findByEmail(String email) {
+
         return userRepository.findByEmail(email);
     }
-/*Det är viktigt att spara användarens lösenord med BCryptPasswordEncoder, när användaren sparas.
-Annars kan databasadministratören se lösenordet i klar text.*/
-    public User save(UserRegistrationDto registration){
+
+    /*Det är viktigt att spara användarens lösenord med BCryptPasswordEncoder, när användaren sparas.
+    Annars kan databasadministratören se lösenordet i klar text.*/
+    public User save(UserRegistrationDto registration) {
         User user = new User();
         user.setFirstName(registration.getFirstName());
         user.setLastName(registration.getLastName());
@@ -52,7 +53,7 @@ Annars kan databasadministratören se lösenordet i klar text.*/
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email);
-        if (user == null){
+        if (user == null) {
             throw new UsernameNotFoundException("Invalid username or password.");
         }
 /*Vi får här ett objekt av Springs User-klass, inte vår User-klass.
@@ -66,7 +67,7 @@ Därför anropas metoden mapRolesToAuthorities.
                 mapRolesToAuthorities(user.getRoles()));
     }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles){
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
         return roles.stream()
                 .map// låter oss omvandla ett objekt till något annat.
                 //Role omvandlas till SimpleGrantedAuthority
